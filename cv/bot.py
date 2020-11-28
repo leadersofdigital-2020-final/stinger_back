@@ -1,12 +1,10 @@
-from config import token
+from .config import token
 import telebot
 from telebot import types # кнопки
 from string import Template
-# from serializers import CVSerializer
+from .serializers import CVSerializer
 
 bot = telebot.TeleBot(token)
-
-user_dict = {}
 
 _keys = ['profession', 'full_name', 'schedule', 'employment', 
             'education', 'salary', 'experience', 'skills', 
@@ -14,12 +12,14 @@ _keys = ['profession', 'full_name', 'schedule', 'employment',
 _dict = dict.fromkeys(_keys)
 
 
+_from_bot = ''
+
 @bot.message_handler(commands=['help', 'start'])
 def send_welcome(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
     itembtn1 = types.KeyboardButton('Давай знакомиться')
-    itembtn2 = types.KeyboardButton('Оставить заявку')
+    itembtn2 = types.KeyboardButton('Пройти собеседование')
 
     markup.add(itembtn1, itembtn2)
     
@@ -45,7 +45,8 @@ def user_reg(message):
 def process_achievements_step(message):
         
     chat_id = message.chat.id
-    # dict['achievements'] = message.text
+    dict['profession'] = message.text
+
 
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
     fivetwo = types.KeyboardButton('5/2')
@@ -73,7 +74,7 @@ def process_phone_step(message):
 def process_salary_step(message):
     
     chat_id = message.chat.id
-    _dict['salary'] = message.text
+    _dict['education'] = message.text
        
     msg = bot.send_message(chat_id, 'Укажите желаемый размер заработной платы')
     bot.register_next_step_handler(msg, process_experience_step)
@@ -82,7 +83,7 @@ def process_salary_step(message):
 def process_experience_step(message):
     
     chat_id = message.chat.id
-    # _dict['experience'] = message.text
+    _dict['salary'] = message.text
 
     msg = bot.send_message(chat_id, 'Расскажите о своем опыте работы: где работали, кем, сколько времени?')
     bot.register_next_step_handler(msg, process_skills_step)
@@ -91,7 +92,7 @@ def process_experience_step(message):
 def process_skills_step(message):
     
     chat_id = message.chat.id
-    # _dict['skills'] = message.text
+    _dict['experience'] = message.text
 
     msg = bot.send_message(chat_id, 'Выделите свои ключевые навыки, компетенции, которыми вы обладаете?')
     bot.register_next_step_handler(msg, process_add_info_step)
@@ -100,7 +101,7 @@ def process_skills_step(message):
 def process_add_info_step(message):
     
     chat_id = message.chat.id
-    _dict['add_info'] = message.text
+    _dict['skills'] = message.text
 
     msg = bot.send_message(chat_id, 'Воу, воу, воу, да вы крутой специалист!;)  Напиши свои главные достижения/результаты на прошлых местах работы/учебы?')
     bot.register_next_step_handler(msg, process_expectations_step)
@@ -110,7 +111,7 @@ def process_add_info_step(message):
 def process_expectations_step(message):
     
     chat_id = message.chat.id
-    _dict['expectations'] = message.text
+    _dict['achievements'] = message.text
 
     msg = bot.send_message(chat_id, 'Отлично, мы почти на финише;) Опишите идеальные условия работы для вас? Что вам важно в работе/работодателе?')
     bot.register_next_step_handler(msg, process_feedback_step)
@@ -119,7 +120,7 @@ def process_expectations_step(message):
 def process_feedback_step(message):
     
     chat_id = message.chat.id
-    _dict['feedback'] = message.text
+    # _dict['feedback'] = message.text
 
     bot.send_message(chat_id, 'Спасибо за оставленную заявку, наш HR-специалист свяжется с вами')
 
@@ -130,7 +131,7 @@ def process_feedback_step(message):
     four = types.KeyboardButton('4.12')
 
     markup.add(one, three, four)
-    msg = bot.send_message(chat_id, 'Мы готовы провести с вами финальное собеседование. В какую дату вам удобно?')
+    msg = bot.send_message(chat_id, 'Мы готовы провести с вами финальное собеседование. В какую дату вам удобно?', reply_markup=markup)
     bot.register_next_step_handler(msg, process_time_step)
         # print(_dict)
 
@@ -147,18 +148,18 @@ def process_time_step(message):
     four = types.KeyboardButton('18:00-20:00')
 
     markup.add(one, three, four)
-    msg = bot.send_message(chat_id, 'А в какой промежуток времени?')
+    msg = bot.send_message(chat_id, 'А в какой промежуток времени?', reply_markup=markup)
     bot.register_next_step_handler(msg, process_end_step)
 
-        # serializers = CVSerializer(data=_dict)
-        # if (serializers.is_valid()):
-        #     serializers.save()
+    serializers = CVSerializer(data=_dict)
+    if (serializers.is_valid()):
+        serializers.save()
 
 
 def process_end_step(message):
 
     chat_id = message.chat.id
-    # _dict['interview_time'] = message.text
+    _dict['feedback'] = message.text
 
     bot.send_message(chat_id, 'Очень скоро вам позвонит ваш будущий коллега;)')
 
@@ -167,8 +168,8 @@ def process_end_step(message):
 
 
 def send_about(message):
-	bot.send_message(message.chat.id, """
-    
+	bot.send_message(message.chat.id, 
+    """
     Мы разрабатываем и поддерживаем собственные мобильные приложения для B2B и B2C, которыми пользуемся мы сами, а также большое число наших клиентов и обычных пользователей.
     Мы ищем Python разработчиков, способных реализовывать от идеи до “продакшна” крупные проекты по:
     Разработке и поддержке существующего функционала по выдаче ЭП. Результатом вашей работы будут пользоваться более 1,5 миллиона людей – на компьютерах, планшетах и смартфонах.
@@ -185,16 +186,20 @@ def send_about(message):
     корпоративные праздники и различные совместные мероприятия.)
     """)
 
-
+@bot.message_handler(content_types=["text"])
+def send_video(message):
+    bot.send_message(message.chat_id, 'Ваши ответы увидит руководитель и даст обратную связь')
 
 @bot.message_handler(content_types=["text"])
 def send_help(message):
     if message.text == "Давай знакомиться":
         send_about(message)
-    elif message.text == 'Оставить заявку':
+    elif message.text == 'Пройти собеседование':
         user_reg(message)
     else:
-        bot.send_message(message.chat.id, 'О нас - /about\nРегистрация - /reg\nПомощь - /help')
+        _from_bot = message.text
+        print(_from_bot)
+        # bot.send_message(message.chat.id, 'О нас - /about\nРегистрация - /reg\nПомощь - /help')
 
 # @bot.message_handler(content_types=["video"])
 
@@ -206,6 +211,9 @@ def send_help_text(message):
 bot.enable_save_next_step_handlers(delay=2)
 
 bot.load_next_step_handlers()
+
+def get_interview():
+    bot.polling() 
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)

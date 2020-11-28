@@ -4,8 +4,7 @@ from .models import CV
 from .serializers import CVSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from .get import get_json_data
-
+from .bot import get_interview
 
 @api_view(["GET", "POST"])
 def show_list(request):
@@ -28,7 +27,8 @@ def show_list(request):
         "date": "2020-11-28T09:23:48.076327Z"
     }
 
-        
+        # if get_interview() is not None:
+        #     print(get_interview())
 
 
         data = CV.objects.all()

@@ -22,8 +22,9 @@ def correct_msg(text):
     words = text.split()
 
     changes = [lemmatizer.lemmatize(w.lower()) for w in words]
-    changes = morph.parse(changes)[0].inflect({'sing', 'nomn'}).word
-    return changes
+    a = 'начинаю'
+    a = morph.parse(changes)[0].inflect({'sing', 'nomn'}).word
+    return a
 
 
 text = '''
