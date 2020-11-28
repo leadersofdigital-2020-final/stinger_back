@@ -1,9 +1,9 @@
 from rest_framework import routers
-from .api import TodoViewSet
+from .api import CVViewSet
 
 
 router = routers.DefaultRouter()
-router.register('api/todo', TodoViewSet, 'backend')
+router.register('api/todo', CVViewSet, 'cv')
 
 
 urlpatterns = router.urls

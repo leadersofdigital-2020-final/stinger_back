@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'backend.apps.BackendConfig',
+    'cv.apps.CVConfig',
     'rest_framework',
     'corsheaders',
 ]
