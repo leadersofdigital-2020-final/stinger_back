@@ -1,10 +1,10 @@
-import config
+from config import token
 import telebot
 from telebot import types # кнопки
 from string import Template
-from serializers import CVSerializer
+# from serializers import CVSerializer
 
-bot = telebot.TeleBot(config.token)
+bot = telebot.TeleBot(token)
 
 user_dict = {}
 
@@ -18,22 +18,15 @@ _dict = dict.fromkeys(_keys)
 def send_welcome(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
-    itembtn1 = types.KeyboardButton('/about')
-    itembtn2 = types.KeyboardButton('/reg')
+    itembtn1 = types.KeyboardButton('Давай знакомиться')
+    itembtn2 = types.KeyboardButton('Оставить заявку')
 
     markup.add(itembtn1, itembtn2)
     
-    bot.send_message(message.chat.id, "Здравствуйте "
+    bot.send_message(message.chat.id, "Привет "
     + message.from_user.first_name
-    + ", я бот, чтобы вы хотели узнать?", reply_markup=markup)
+    + ":) Мы рады, что такой талантливый человек заинтересовался работой у нас. Давай познакомимся и поймем, насколько подходим друг другу?", reply_markup=markup)
 
-@bot.message_handler(commands=['about'])
-def send_about(message):
-	bot.send_message(message.chat.id, "Мы надежная компания" 
-    + " company. 10 лет на рынке.")
-
-
-@bot.message_handler(commands=["reg"])
 def user_reg(message):
     
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
@@ -45,161 +38,167 @@ def user_reg(message):
     markup.add(itembtn1, itembtn2, itembtn3)
        
 
-    msg = bot.send_message(message.chat.id, 'Вакансия', reply_markup=markup)
-    bot.register_next_step_handler(msg, process_city_step)
+    msg = bot.send_message(message.chat.id, 'Вас заинтересовала позиция', reply_markup=markup)
+    bot.register_next_step_handler(msg, process_achievements_step)
 
 
-def process_city_step(message):
-    try:
-        chat_id = message.chat.id
-        # user_dict[chat_id] = User(message.text)
-        _dict['proffession'] = message.text
-
-        print(_dict)
+def process_achievements_step(message):
         
-        markup = types.ReplyKeyboardRemove(selective=False)
+    chat_id = message.chat.id
+    # dict['achievements'] = message.text
 
-        msg = bot.send_message(chat_id, 'ФИО', reply_markup=markup)
-        bot.register_next_step_handler(msg, process_fullname_step)
+    markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+    fivetwo = types.KeyboardButton('5/2')
+    twotwo = types.KeyboardButton('2/2')
+    flexfourthy = types.KeyboardButton('гибкий 40 часов')
+    flextwenty = types.KeyboardButton('гибкий 20 часов')
+    markup.add(fivetwo, twotwo, flexfourthy, flextwenty)
 
-        print(_dict)
 
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
+    msg = bot.send_message(chat_id, 'Какой график для вас самый комфортный?', reply_markup=markup)
+    bot.register_next_step_handler(msg, process_phone_step)
 
-def process_fullname_step(message):
-    try:
-        chat_id = message.chat.id
-        _dict['full_name'] = message.text
-
-        msg = bot.send_message(chat_id, 'Ваш номер телефона')
-        bot.register_next_step_handler(msg, process_phone_step)
-
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
 
 def process_phone_step(message):
     # int(message.text)
 
     chat_id = message.chat.id
-    _dict['phone'] = message.text
+    _dict['schedule'] = message.text
 
-    msg = bot.send_message(chat_id, 'Введите номер телефона для связи')
-    bot.register_next_step_handler(msg, process_employment_step)
+    msg = bot.send_message(chat_id, 'Напишите, какое у вас образование: учебное заведение и специализация?')
+    bot.register_next_step_handler(msg, process_salary_step)
 
-    # except Exception as e:
-    #     msg = bot.reply_to(message, 'Вы ввели что то другое. Пожалуйста введите номер телефона.')
-    #     bot.register_next_step_handler(msg, process_phone_step)
 
-def process_employment_step(message):
-    try:
-        chat_id = message.chat.id
-        _dict['employment'] = message.text
-
-        msg = bot.send_message(chat_id, 'Частичная или полная занятость')
-        bot.register_next_step_handler(msg, process_salary_step)
-
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
 
 def process_salary_step(message):
-    try:
-        chat_id = message.chat.id
-        _dict['salary'] = message.text
+    
+    chat_id = message.chat.id
+    _dict['salary'] = message.text
        
-        msg = bot.send_message(chat_id, 'Зарплата')
-        bot.register_next_step_handler(msg, process_experience_step)
+    msg = bot.send_message(chat_id, 'Укажите желаемый размер заработной платы')
+    bot.register_next_step_handler(msg, process_experience_step)
 
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
 
 def process_experience_step(message):
-    try:
-        chat_id = message.chat.id
-        _dict['experience'] = message.text
+    
+    chat_id = message.chat.id
+    # _dict['experience'] = message.text
 
-        msg = bot.send_message(chat_id, 'Опыт работы в формате 1г 2м')
-        bot.register_next_step_handler(msg, process_skills_step)
+    msg = bot.send_message(chat_id, 'Расскажите о своем опыте работы: где работали, кем, сколько времени?')
+    bot.register_next_step_handler(msg, process_skills_step)
 
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
 
 def process_skills_step(message):
-    try:
-        chat_id = message.chat.id
-        _dict['skills'] = message.text
+    
+    chat_id = message.chat.id
+    # _dict['skills'] = message.text
 
-        msg = bot.send_message(chat_id, 'Навыки')
-        bot.register_next_step_handler(msg, process_achievements_step)
+    msg = bot.send_message(chat_id, 'Выделите свои ключевые навыки, компетенции, которыми вы обладаете?')
+    bot.register_next_step_handler(msg, process_add_info_step)
 
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
-
-def process_achievements_step(message):
-    try:
-        
-        chat_id = message.chat.id
-        _dict['achievements'] = message.text
-
-        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-        fivetwo = types.KeyboardButton('5/2')
-        twotwo = types.KeyboardButton('2/2')
-        flexfourthy = types.KeyboardButton('гибкий 40 часов')
-        flextwenty = types.KeyboardButton('гибкий 20 часов')
-        markup.add(fivetwo, twotwo, flexfourthy, flextwenty)
-
-
-        msg = bot.send_message(chat_id, 'График работы', reply_markup=markup)
-        bot.register_next_step_handler(msg, process_expectations_step)
-
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
-
-def process_expectations_step(message):
-    try:
-        chat_id = message.chat.id
-        _dict['expectations'] = message.text
-
-        msg = bot.send_message(chat_id, 'Ожидания от работы')
-        bot.register_next_step_handler(msg, process_add_info_step)
-
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
 
 def process_add_info_step(message):
-    try:
-        chat_id = message.chat.id
-        _dict['add_info'] = message.text
+    
+    chat_id = message.chat.id
+    _dict['add_info'] = message.text
 
-        msg = bot.send_message(chat_id, 'Дополнительная информация')
-        bot.register_next_step_handler(msg, process_feedback_step)
+    msg = bot.send_message(chat_id, 'Воу, воу, воу, да вы крутой специалист!;)  Напиши свои главные достижения/результаты на прошлых местах работы/учебы?')
+    bot.register_next_step_handler(msg, process_expectations_step)
 
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
+
+
+def process_expectations_step(message):
+    
+    chat_id = message.chat.id
+    _dict['expectations'] = message.text
+
+    msg = bot.send_message(chat_id, 'Отлично, мы почти на финише;) Опишите идеальные условия работы для вас? Что вам важно в работе/работодателе?')
+    bot.register_next_step_handler(msg, process_feedback_step)
+
 
 def process_feedback_step(message):
-    try:
-        chat_id = message.chat.id
-        _dict['feedback'] = message.text
+    
+    chat_id = message.chat.id
+    _dict['feedback'] = message.text
 
-        print(_dict)
+    bot.send_message(chat_id, 'Спасибо за оставленную заявку, наш HR-специалист свяжется с вами')
 
-        serializers = TodoSerializer(data=_dict)
-        if (serializers.is_valid()):
-            serializers.save()
-        
-    except Exception as e:
-        bot.reply_to(message, 'ooops!!')
+    markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True) 
+
+    one = types.KeyboardButton('1.12')
+    three = types.KeyboardButton('3.12')
+    four = types.KeyboardButton('4.12')
+
+    markup.add(one, three, four)
+    msg = bot.send_message(chat_id, 'Мы готовы провести с вами финальное собеседование. В какую дату вам удобно?')
+    bot.register_next_step_handler(msg, process_time_step)
+        # print(_dict)
+
+
+def process_time_step(message):
+    
+    chat_id = message.chat.id
+        # _dict['interview_date'] = message.text
+
+    markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True) 
+
+    one = types.KeyboardButton('9:00-12:00')
+    three = types.KeyboardButton('13:00-16:00')
+    four = types.KeyboardButton('18:00-20:00')
+
+    markup.add(one, three, four)
+    msg = bot.send_message(chat_id, 'А в какой промежуток времени?')
+    bot.register_next_step_handler(msg, process_end_step)
+
+        # serializers = CVSerializer(data=_dict)
+        # if (serializers.is_valid()):
+        #     serializers.save()
+
+
+def process_end_step(message):
+
+    chat_id = message.chat.id
+    # _dict['interview_time'] = message.text
+
+    bot.send_message(chat_id, 'Очень скоро вам позвонит ваш будущий коллега;)')
 
 # def getRegData(user, title, name):
 #     print(_dict)
 
-# произвольный текст
+
+def send_about(message):
+	bot.send_message(message.chat.id, """
+    
+    Мы разрабатываем и поддерживаем собственные мобильные приложения для B2B и B2C, которыми пользуемся мы сами, а также большое число наших клиентов и обычных пользователей.
+    Мы ищем Python разработчиков, способных реализовывать от идеи до “продакшна” крупные проекты по:
+    Разработке и поддержке существующего функционала по выдаче ЭП. Результатом вашей работы будут пользоваться более 1,5 миллиона людей – на компьютерах, планшетах и смартфонах.
+    Мы не работаем под заказ, мы создаем тиражные продукты. Используемый стек технологий: C++, Python, PostgreSQL, Javascript, NodeJS, Redis, ElasticSearch, Clickhouse. Вам не нужно знать буквально все наши технологии. Нужна светлая голова и страстное желание работать. Делать лучший продукт в России.
+
+    Мы предлагаем:
+    интересную работу в крупной и стабильной IT-компании;
+    заработную плату в зависимости от квалификации и уровня ответственности;
+    оформление по ТК РФ;
+    премии от 5 до 20% по итогам работы за месяц
+    социальные гарантии;
+    корпоративное обучение;
+    возможности профессионального и карьерного роста, курсы иностранных языков;
+    корпоративные праздники и различные совместные мероприятия.)
+    """)
+
+
+
 @bot.message_handler(content_types=["text"])
 def send_help(message):
-    bot.send_message(message.chat.id, 'О нас - /about\nРегистрация - /reg\nПомощь - /help')
+    if message.text == "Давай знакомиться":
+        send_about(message)
+    elif message.text == 'Оставить заявку':
+        user_reg(message)
+    else:
+        bot.send_message(message.chat.id, 'О нас - /about\nРегистрация - /reg\nПомощь - /help')
 
-# произвольное фото
+# @bot.message_handler(content_types=["video"])
+
+
 @bot.message_handler(content_types=["photo"])
 def send_help_text(message):
     bot.send_message(message.chat.id, 'Напишите текст')

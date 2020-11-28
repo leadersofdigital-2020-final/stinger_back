@@ -11,18 +11,34 @@ from .get import get_json_data
 def show_list(request):
 
     if (request.method == "GET"):
-        json_data = None
+        json_data = {
+        "id": 1,
+        "profession": "программист Python",
+        "full_name": "Ивин П.А.",
+        "schedule": "40",
+        "employment": "flex",
+        "education": "bachelor",
+        "salary": "30 000",
+        "experience": 1,
+        "skills": "Python, matplotlib, pandas",
+        "achievements": "text",
+        "expectations": "text",
+        "add_info": "text",
+        "feedback": "text",
+        "date": "2020-11-28T09:23:48.076327Z"
+    }
 
-        # if json_data is not None:
-        #     serializers = CVSerializer(data=json_data)
-        #     if (serializers.is_valid()):
-        #         serializers.save()
+        
 
 
         data = CV.objects.all()
-        serializers = CVSerializer(data, many=True)
-        print(serializers.data)
-        return Response(serializers.data)
+        get_serializers = CVSerializer(data, many=True)
+        print()
+        if get_serializers.data[-1]['date'] < json_data['date']:
+            post_serializers = CVSerializer(data=json_data)
+            if (post_serializers.is_valid()):
+                post_serializers.save()
+        return Response(get_serializers.data)
 
     elif (request.method == "POST"):
         serializers = CVSerializer(data=request.data)
@@ -31,3 +47,11 @@ def show_list(request):
             return Response(serializers.data, status=status.HTTP_201_CREATED)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    elif request.method == "DELETE":
+        operation = CV.delete()
+        if operation:
+            data["success"] = "delete succesful"
+        else:
+            data["failure"] = "delete failure"
+        data = {}
+        return Response(data=data)
