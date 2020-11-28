@@ -11,9 +11,12 @@ def show_list(request):
 
     if (request.method == "GET"):
         json_data = {
-        "id": 1,
-        "profession": "программист Python",
+        "id": 8,
         "full_name": "Ивин П.А.",
+        "profession": "программист Python",
+        "image": "https://img2.freepng.ru/20180622/pol/kisspng-man-male-facial-hair-dentistry-freud-5b2d6781f36fd2.3821397415297022739971.jpg",
+        "video": "http://s35.savefrom.net/media/3382868757/9ed67c4dfcd7d327175f2df6cf1005ae/Sergueї+Panarine.mp4",
+        "stage": 3,
         "schedule": "40",
         "employment": "flex",
         "education": "bachelor",
@@ -24,7 +27,9 @@ def show_list(request):
         "expectations": "text",
         "add_info": "text",
         "feedback": "text",
-        "date": "2020-11-28T09:23:48.076327Z"
+        "date": "2020-11-28T09:59:22.420915Z",
+        "cellNumber": "+7 903 228 65 68",
+        "rating":4
     }
 
         # if get_interview() is not None:
@@ -33,11 +38,11 @@ def show_list(request):
 
         data = CV.objects.all()
         get_serializers = CVSerializer(data, many=True)
-        print()
-        if get_serializers.data[-1]['date'] < json_data['date']:
-            post_serializers = CVSerializer(data=json_data)
-            if (post_serializers.is_valid()):
-                post_serializers.save()
+
+        # if get_serializers.data[-1]['date'] < json_data['date']:
+        #     post_serializers = CVSerializer(data=json_data)
+        #     if (post_serializers.is_valid()):
+        #         post_serializers.save()
         return Response(get_serializers.data)
 
     elif (request.method == "POST"):

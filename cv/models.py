@@ -5,7 +5,7 @@ class CV(models.Model):
     full_name = models.CharField(max_length=100)
     profession = models.CharField(max_length=100)
     
-    image = models.CharField(max_length=100)
+    image = models.CharField(max_length=300)
     video = models.CharField(max_length=100)
 
     stage = models.PositiveIntegerField(default=0)
