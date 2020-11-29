@@ -1,7 +1,6 @@
 from django.db import models
 
-
-class CV(models.Model):
+class Compare(models.Model):
     full_name = models.CharField(max_length=100)
     profession = models.CharField(max_length=100)
     
@@ -24,6 +23,3 @@ class CV(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     phone = models.CharField(max_length=100)
     rating = models.PositiveIntegerField(default=0)
-
-    # class Meta:
-    #     verbose_name = 'Резюме'

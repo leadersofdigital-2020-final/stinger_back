@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     'cv.apps.CVConfig',
     'rest_framework',
     'corsheaders',
+    'vacancy.apps.VacancyConfig',
+    'compare.apps.CompareConfig'
 ]
 
 MIDDLEWARE = [
