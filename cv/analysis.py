@@ -5,7 +5,7 @@ from pymorphy2 import MorphAnalyzer
 keywords = [
     {
         'Backend Python-разработчик': {
-            'language':  ['Python 2.x, Python 3.x'],
+            'language':  ['Python 2', 'Python 3'],
             'frameworks': ['Django', "Flask"], 
             'libs': ['asyncio'], 
             'databases': ['Postgre', 'MS-SQL', 'MySQL'],
@@ -21,10 +21,15 @@ def correct_msg(text):
     
     words = text.split()
 
-    changes = [lemmatizer.lemmatize(w.lower()) for w in words]
-    a = 'начинаю'
-    a = morph.parse(changes)[0].inflect({'sing', 'nomn'}).word
-    return a
+    # changes = [lemmatizer.lemmatize(w.lower()) for w in words]
+    
+    match = []
+
+    for word in words:
+        for keyword in keywords[0]['Backend Python-разработчик']['language']:
+            if word.lower().contains(keyword):
+                match.append(word)
+    return match
 
 
 text = '''

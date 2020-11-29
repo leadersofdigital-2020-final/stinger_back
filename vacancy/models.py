@@ -4,10 +4,10 @@ from django.db import models
 class Vacancy(models.Model):
     profession = models.CharField(max_length=100)
 
-    schedule = models.CharField(max_length=100)
+    schedule = models.CharField(max_length=100, blank=True)
     employment = models.CharField(max_length=100)
     education = models.CharField(max_length=100)
-    salary = models.CharField(max_length=100)
+    salary = models.CharField(max_length=100, blank=True)
 
     experience = models.PositiveIntegerField(default=0)
     skills = models.CharField(max_length=100)
@@ -22,16 +22,16 @@ class Vacancy(models.Model):
         verbose_name = 'Резюме'
 
 
-# {
-#         "profession": "Senior Python Developer",
-#         "schedule": 40,
-#         "employment": "flex",
-#         "education": "master",
-#         "salary": 200000,
-#         "experience": 5,
-#         "skills": "Python, matplotlib, pandas",
-#         "achievements": "text",
-#         "expectations": "text",
-#         "add_info": "text",
-#         "feedback": "text"
-# }
+{
+        "profession": "Senior Python Developer",
+        "schedule": 40,
+        "employment": "flex",
+        "education": "master",
+        "salary": 200000,
+        "experience": 5,
+        "skills": "Python, matplotlib, pandas",
+        "achievements": "text",
+        "expectations": "text",
+        "add_info": "text",
+        "feedback": "text"
+}

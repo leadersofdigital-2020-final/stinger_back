@@ -14,7 +14,7 @@ class Compare(models.Model):
     salary = models.PositiveIntegerField()
 
     experience = models.PositiveIntegerField(default=0)
-    skills = models.CharField(max_length=100)
+    skills = (models.CharField(max_length=100), models.CharField(max_length=100))
     achievements = models.CharField(max_length=300, blank=True)
     expectations = models.CharField(max_length=100)
     add_info = models.CharField(max_length=100)
